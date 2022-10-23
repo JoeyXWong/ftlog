@@ -2,6 +2,7 @@ package bookstore
 
 import (
 	"errors"
+	"fmt"
 )
 
 type (
@@ -23,13 +24,17 @@ func Buy(b Book) (Book, error) {
 	return b, nil
 }
 
-func GetAllBooks(catalog []Book) []Book {
-	return catalog
+func GetAllBooks(catalog map[int]Book) []Book {
+	var books []Book
+	for _, b := range catalog {
+		books = append(books, b)
+	}
+	return books
 }
 
 func GetBook(catalog map[int]Book, id int) (Book, error) {
 	if book, found := catalog[id]; found {
 		return book, nil
 	}
-	return Book{}, errors.New("Book for Id not found")
+	return Book{}, fmt.Errorf("Book for Id:%d not found", id)
 }

@@ -2,6 +2,7 @@ package bookstore_test
 
 import (
 	"bookstore"
+	"sort"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -54,17 +55,21 @@ func TestBuyInvalid(t *testing.T) {
 
 func TestGetAllBooks(t *testing.T) {
 	t.Parallel()
-	catalog := []bookstore.Book{
-		{Title: "book1"},
-		{Title: "book2"},
+	catalog := map[int]bookstore.Book{
+		1: {Id: 1, Title: "book1"},
+		2: {Id: 2, Title: "book2"},
 	}
 
 	want := []bookstore.Book{
-		{Title: "book1"},
-		{Title: "book2"},
+		{Id: 1, Title: "book1"},
+		{Id: 2, Title: "book2"},
 	}
 
 	got := bookstore.GetAllBooks(catalog)
+
+	sort.Slice(got, func(i, j int) bool {
+		return got[i].Id < got[j].Id
+	})
 
 	if !cmp.Equal(want, got) {
 		t.Errorf(cmp.Diff(want, got))
