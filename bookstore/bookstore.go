@@ -9,11 +9,15 @@ type (
 
 	// Book represents information about a book.
 	Book struct {
-		Id     int
-		Title  string
-		Author string
-		Copies int
+		Id              int
+		Title           string
+		Author          string
+		Copies          int
+		PriceCents      int
+		DiscountPrecent int
 	}
+
+	Catalog map[int]Book
 )
 
 func Buy(b Book) (Book, error) {
@@ -24,17 +28,22 @@ func Buy(b Book) (Book, error) {
 	return b, nil
 }
 
-func GetAllBooks(catalog map[int]Book) []Book {
+func (c Catalog) GetAllBooks() []Book {
 	var books []Book
-	for _, b := range catalog {
+	for _, b := range c {
 		books = append(books, b)
 	}
 	return books
 }
 
-func GetBook(catalog map[int]Book, id int) (Book, error) {
-	if book, found := catalog[id]; found {
+func (c Catalog) GetBook(id int) (Book, error) {
+	if book, found := c[id]; found {
 		return book, nil
 	}
 	return Book{}, fmt.Errorf("Book for Id:%d not found", id)
+}
+
+func (b Book) GetNetPriceCents() float64 {
+	netPrice := float64(b.Copies*b.PriceCents) * (float64(b.DiscountPrecent) / 100.00)
+	return netPrice
 }
